@@ -41,9 +41,8 @@ curl http://localhost:8080/health
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pytest -v
+.venv/bin/pip install -r requirements.txt
+python -m pytest -v
 ```
 
 ## Generate docs.json
