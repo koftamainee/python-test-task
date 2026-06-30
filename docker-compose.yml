@@ -2,7 +2,7 @@ services:
   app:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "8080:8080"
     env_file:
       - .env
     depends_on:
@@ -11,7 +11,7 @@ services:
       elasticsearch:
         condition: service_healthy
     volumes:
-      - ./data:/app/data
+      - ./data:/data:ro
     restart: unless-stopped
 
   db:
@@ -25,12 +25,12 @@ services:
       retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./db/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./data:/data:ro
     restart: unless-stopped
 
   elasticsearch:
-    image: elasticsearch:8.17.2
+    image: elasticsearch:9.4.2
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=true
@@ -38,6 +38,7 @@ services:
       - xpack.security.transport.ssl.enabled=false
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - cluster.routing.allocation.disk.threshold_enabled=false
     healthcheck:
       test:
         [
@@ -50,6 +51,19 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
     restart: unless-stopped
+
+  data-loader:
+    build: ./data_loader
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ./data:/data:ro
+    restart: no
 
 volumes:
   pgdata:

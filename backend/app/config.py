@@ -4,8 +4,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     database_url: str
     elasticsearch_url: str
-    elasticsearch_index: str
-    csv_path: str
+    elasticsearch_index: str = "documents"
+    elasticsearch_user: str = "elastic"
+    elasticsearch_password: str
 
     model_config = {
         "env_file": ".env",
