@@ -5,3 +5,5 @@ asyncpg
 elasticsearch
 aiohttp
 pydantic-settings
+pytest
+pytest-asyncio

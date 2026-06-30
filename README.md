@@ -36,6 +36,16 @@ curl http://localhost:8080/health
 - `GET /health` — health check
 - `GET /openapi.json` — OpenAPI spec (same as `docs.json`)
 
+## Tests
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pytest -v
+```
+
 ## Generate docs.json
 
 ```bash
