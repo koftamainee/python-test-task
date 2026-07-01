@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from elasticsearch import AsyncElasticsearch
+from elasticsearch import AsyncElasticsearch, NotFoundError
 
 from app.config import settings
 
@@ -18,8 +18,10 @@ class ESDocumentStorage:
         return [hit["_id"] for hit in response["hits"]["hits"]]
 
     async def delete(self, document_id: UUID):
-        await self._client.delete(
-            index=settings.elasticsearch_index,
-            id=str(document_id),
-            ignore=[404],
-        )
+        try:
+            await self._client.delete(
+                index=settings.elasticsearch_index,
+                id=str(document_id),
+            )
+        except NotFoundError:
+            pass

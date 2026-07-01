@@ -1,5 +1,6 @@
 import asyncio
 import csv
+import json
 import os
 import uuid
 from ast import literal_eval
@@ -44,7 +45,7 @@ async def load_to_postgres(docs: list[dict], dsn: str) -> bool:
             return False
 
         for d in docs:
-            rubrics_json = str(d["rubrics"]).replace("'", '"')
+            rubrics_json = json.dumps(d["rubrics"], ensure_ascii=False)
             await session.execute(
                 text(
                     "INSERT INTO documents (id, text, rubrics, created_date) "
@@ -115,9 +116,8 @@ async def main():
     docs = read_csv(csv_path)
     print(f"Loaded {len(docs)} documents from CSV")
 
-    loaded = await load_to_postgres(docs, dsn)
-    if loaded:
-        await load_to_es(docs, es_url, es_user, es_pass, es_index)
+    await load_to_postgres(docs, dsn)
+    await load_to_es(docs, es_url, es_user, es_pass, es_index)
 
     print("Done")
 
