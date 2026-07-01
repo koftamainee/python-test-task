@@ -10,8 +10,6 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-    volumes:
-      - ./data:/data:ro
     restart: unless-stopped
 
   db:
